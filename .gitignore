@@ -1,0 +1,6 @@
+#folder with first java trials
+Project/
+#IDE system files
+**/*.iml
+**/.idea
+**/out

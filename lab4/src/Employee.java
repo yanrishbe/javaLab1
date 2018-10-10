@@ -1,7 +1,3 @@
-// вывод информации в файл, статический метод чтения из файла
-// и вывода прочитанной информации на экран.
-
-//Подсчитать среднюю зарплату и количество служащих с детьми.
 import java.io.*;
 
 public class Employee {
@@ -9,85 +5,84 @@ public class Employee {
     private int salary;
     private boolean children;
 
-    Employee () throws IOException {
+    Employee(EmployeesController employeesController) throws IOException {
+        File file = new File("lab4.doc");
+        System.out.println("A file has been created.");
+        file.deleteOnExit(); //файл удалится после завершения работы виртуальной машины Java
 
-        String info;
-        //открываем символьный поток ввода
-        BufferedReader br = new BufferedReader (new InputStreamReader(System.in));
-       // BufferedWriter bw = new BufferedWriter(new FileWriter("document.doc"));
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        BufferedWriter bw = new BufferedWriter(new FileWriter(file, true));
+
+
         System.out.println("Please input an employee's last name: ");
-         while ((this.lastName=br.readLine())!=null) {
-             System.out.println(this.lastName);
-         }
+        this.setEmployee(br, bw);
 
         System.out.println("Please input an employee's salary: ");
-            this.salary=Integer.parseInt(br.readLine());
-            System.out.println(this.salary);
+        this.setSalary(br, bw, employeesController);
 
-        while(true){
-            System.out.println("Has children?(Y/N): ");
-            int value;
-            while ((value = br.read()) != -1) {
-                info= new String(Character.toChars(value));
-                System.out.println(info);
-            }
+        System.out.println("Has children?(Y/N): ");
+        this.setHasChildren(br, bw, employeesController);
 
-            info=br.readLine();
-            if("Y".equals(info)){
-                this.children=true;
+        bw.append("\n-------------------------------------------------------------------\n");
+        bw.flush();
+        bw.close();
+    }
+
+    /***
+     * Cтатический метод вывода информации из файла
+     * @throws IOException
+     */
+    public static void OutputOfFile() throws IOException {
+        String info;
+        File file = new File("lab4.doc");
+        BufferedReader br = new BufferedReader(new FileReader(file)); //поток для вывода информации
+        System.out.println("Reading from file: \n");
+        while ((info = (br.readLine())) != null)
+            System.out.println(info);
+        br.close();
+    }
+
+    public void setEmployee(BufferedReader br, BufferedWriter bw) throws IOException {
+        this.lastName = br.readLine();
+        bw.append("An employee: " + this.lastName);
+    }
+
+    public void setSalary(BufferedReader br, BufferedWriter bw, EmployeesController employeesController) {
+        String p;
+        while (true) {
+            try {
+                p = br.readLine();
+                this.salary = Integer.parseInt(p);
+                employeesController.addSalary(this.salary);
+                bw.append("; salary: " + this.salary + "; ");
                 break;
+            } catch (Exception e) {
+                System.out.println("Wrong number! Please try again!");
+                continue;
             }
-            if("N".equals(info)){
-                this.children=false;
-                break;
-            }
-            System.out.println("Error! Please input a correct symbol");
         }
     }
 
-    //записываем информацию в файл lab4.doc
-    public void InputInFile()throws IOException{
-        File file = new File("lab4.doc");
-        System.out.println("A file has been created");
-        file.deleteOnExit(); //файл удалится после завершения работы виртуальной машины Java
-        //поток для записи в файл
-        FileWriter fw = new FileWriter(file,true);
-        fw.append("\nAn employee: "+this.lastName+"; salary: "+this.salary+"; ");
-        if (this.children)
-            fw.append("has children.\n");
-        else fw.append("has no children.\n");
-        fw.append("--------------------------------------------------------------------------------\n");
-        fw.flush();
-        fw.close();
+    public void setHasChildren(BufferedReader br, BufferedWriter bw, EmployeesController employeesController)
+            throws IOException {
+        String info;
+        while (true) {
+            info = br.readLine();
+            if (info.equals("Y")) {
+                this.children = true;
+                bw.append("has children.\n");
+                employeesController.addParent();
+                break;
+            }
+            if (info.equals("N")) {
+                this.children = false;
+                bw.append("has no children.\n");
+                break;
+            } else {
+                System.out.println("Error! Please input a correct symbol!");
+            }
+        }
     }
-
-    
-    //статический метод вывода информации из файла
-    public static void OutputOfFile()throws IOException{
-        File file = new File("lab4 .doc");
-        //поток для вывода информации
-        FileReader reader;
-        char buffer[];
-        int numb;
-        buffer=new char[1];
-        reader = new FileReader(file);
-        do{
-            numb=reader.read(buffer);
-            System.out.print(buffer[0]);
-        }while(numb==1);
-        reader.close();
-    }
-    public static void main(String[] args) throws IOException{
-        Drugstore[] drugstores;
-        drugstores=new Drugstore[3];
-        for (int i=0; i<3; i++)
-            drugstores[i]=new Drugstore();
-        for(int i=0;i<3;i++)
-            drugstores[i].InputInFile();
-        OutputOfFile();
-    }
-
-
 }
 
 

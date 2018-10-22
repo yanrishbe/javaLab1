@@ -68,13 +68,13 @@ public class Employee {
         String info;
         while (true) {
             info = br.readLine();
-            if (info.equals("Y")) {
+            if (info.equals("Y")||info.equals("y")) {
                 this.children = true;
                 bw.append("has children.\n");
                 employeesController.addParent();
                 break;
             }
-            if (info.equals("N")) {
+            if (info.equals("N")||info.equals("n")) {
                 this.children = false;
                 bw.append("has no children.\n");
                 break;

@@ -1,0 +1,1 @@
+I'm writing this file just for the lab, an examinator sees I'm able to write Java labs. The task is to count Hello.
